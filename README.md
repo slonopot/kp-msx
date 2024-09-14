@@ -36,14 +36,14 @@ git clone https://github.com/slonopot/kp-msx
 cd kp-msx
 python3.12 -m venv venv
 ./venv/bin/pip install -r requirements.txt
-MONGODB_URL="ссылка на монго" HOST="http://ваш айпи:1234" nohup ./venv/bin/uvicorn --host 0.0.0.0 --port 1234 api:app &
+MONGODB_URL="ссылка на монго" MSX_HOST="http://ваш айпи:1234" nohup ./venv/bin/uvicorn --host 0.0.0.0 --port 1234 api:app &
 ```
 
 Если `http://{IP}:{PORT}/msx/start.json` отвечает, значит, все получилось.
 
 В аргумент MSX вписать айпи вашего сервера и порт (1234 в вашем случае) через двоеточие, например: `1.2.3.4:1234`.
 
-Можно кинуть на домен и прокинуть через nginx через proxy_pass. Для этого можно `--host 127.0.0.1`, `HOST="http://ваш домен"` и в конфиге сайта для nginx сделать, например, так:
+Можно кинуть на домен и прокинуть через nginx через proxy_pass. Для этого можно `--host 127.0.0.1`, `MSX_HOST="http://ваш домен"` и в конфиге сайта для nginx сделать, например, так:
 
 ```
     location /msx {
