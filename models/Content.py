@@ -12,9 +12,30 @@ class Content:
         self.plot = data.get('plot')
         self.poster = (data.get('posters') or {}).get('medium')
         self.video = None
+
+        self.subtitle_tracks = dict()
+
         if (videos := data.get('videos')) is not None:
             self.poster = (data.get('posters') or {}).get('big')
-            self.video = videos[-1]['files'][0]['url']['hls4']
+
+            video = None
+            if config.QUALITY is not None:
+                video = [i for i in videos[-1]['files'] if i['quality'] == config.QUALITY]
+                if len(video) == 0:
+                    video = None
+                else:
+                    video = video[0]
+
+            if video is None:
+                video = sorted(videos[-1]['files'], key=lambda x: x.get('quality_id'))[-1]
+
+            self.video = video['url'][config.PROTOCOL]
+
+            if config.PROTOCOL == 'http':
+                for subtitle_track in videos[-1]['subtitles']:
+                    language = subtitle_track.get('lang')
+                    self.subtitle_tracks[f'html5x:subtitle:{language}:{language}'] = subtitle_track['url']
+
         if (seasons := data.get('seasons')) is not None:
             self.poster = (data.get('posters') or {}).get('big')
             self.seasons = [Season(i) for i in seasons]
@@ -63,7 +84,7 @@ class Content:
                         "properties": {
                             "button:restart:icon": "settings",
                             "button:restart:action": "panel:request:player:options"
-                        }
+                        } | self.subtitle_tracks
                     }]
             }]
         }
