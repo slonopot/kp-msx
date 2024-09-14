@@ -1,3 +1,4 @@
+import config
 from models.MSX import MSX
 from models.Season import Season
 
@@ -19,23 +20,20 @@ class Content:
             self.seasons = [Season(i) for i in seasons]
 
     def msx_path(self):
-        #return f'/{self.type}?id={{ID}}&content_id={self.id}'
         return f'/content?id={{ID}}&content_id={self.id}'
 
     def to_msx(self):
         return {
             'title': self.title,
             'image': self.poster,
-            #"action": f"panel:{MSX.HOST}/msx{self.msx_path()}"
-            "action": f"panel:{MSX.HOST}/msx/content?id={{ID}}&content_id={self.id}"
+            "action": f"panel:{config.MSX_HOST}/msx/content?id={{ID}}&content_id={self.id}"
         }
 
     def msx_action(self):
         if self.video is not None:
-            return f"video:plugin:https://slonopot.github.io/msx-hlsx/hlsx.html?url={self.video}"
-            #return f'video:resolve:request:interaction:{self.video}@http://msx.benzac.de/interaction/play.html'
+            return f"video:plugin:{config.PLAYER}?url={self.video}"
         if self.seasons is not None:
-            return f"panel:{MSX.HOST}/msx/seasons?id={{ID}}&content_id={self.id}"
+            return f"panel:{config.MSX_HOST}/msx/seasons?id={{ID}}&content_id={self.id}"
 
     def to_msx_panel(self):
         return {
@@ -83,7 +81,7 @@ class Content:
                     "type": "button",
                     "layout": f"{(season.n - 1) % 24 // 6 * 2},{(season.n - 1) % 6},2,1",
                     "label": f"Cезон {season.n}",
-                    "action": f'panel:{MSX.HOST}/msx/episodes?id={{ID}}&content_id={self.id}&season={season.n}',
+                    "action": f'panel:{config.MSX_HOST}/msx/episodes?id={{ID}}&content_id={self.id}&season={season.n}',
                     'focus': focus
                 })
             focus = False

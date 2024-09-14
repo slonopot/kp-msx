@@ -1,4 +1,4 @@
-
+import config
 
 
 class MSX:
@@ -6,16 +6,12 @@ class MSX:
     def __init__(self):
         pass
 
-    #HOST = 'http://192.168.100.4:3757'
-    HOST = 'REDACTED'
-
     @staticmethod
     def start():
         return {
             'name': 'kino.pub',
             'version': '6.6.6',
-            'parameter': f'menu:{MSX.HOST}/msx/menu?id={{ID}}',
-            #'parameter': f'content:{MSX.HOST}/msx/test?id={{ID}}',
+            'parameter': f'menu:{config.MSX_HOST}/msx/menu?id={{ID}}',
             'welcome': 'none'
         }
 
@@ -30,7 +26,7 @@ class MSX:
                 {
                     "icon": "vpn-key",
                     "label": "Регистрация",
-                    "data": f"{MSX.HOST}/msx/registration?id={{ID}}"
+                    "data": f"{config.MSX_HOST}/msx/registration?id={{ID}}"
                 }
             ],
         }
@@ -49,13 +45,13 @@ class MSX:
             "type": "default",
             "label": "Поиск",
             "icon": "search",
-            'data': f'request:interaction:{MSX.HOST}/msx/search?id={{ID}}&q={{INPUT}}|search:3|ru@http://msx.benzac.de/interaction/input.html'
+            'data': f'request:interaction:{config.MSX_HOST}/msx/search?id={{ID}}&q={{INPUT}}|search:3|ru@http://msx.benzac.de/interaction/input.html'
         })
         entry['menu'].append({
             "type": "default",
             "label": "Закладки",
             "icon": "bookmark",
-            'data': f'{MSX.HOST}/msx/bookmarks?id={{ID}}'
+            'data': f'{config.MSX_HOST}/msx/bookmarks?id={{ID}}'
         })
         return entry
 
@@ -92,7 +88,7 @@ class MSX:
                         "type": "button",
                         "layout": "0,1,6,1",
                         "label": "Я ввёл код",
-                        "action": f"execute:{MSX.HOST}/msx/check_registration?id={{ID}}"
+                        "action": f"execute:{config.MSX_HOST}/msx/check_registration?id={{ID}}"
                     }]
             }]
         }
@@ -133,20 +129,17 @@ class MSX:
                 {
                     'title': 'Свежие',
                     'icon': 'fiber-new',
-                    #'action': f'content:{MSX.HOST}/msx/category?id={{ID}}&category={category}&extra=fresh'
-                    'action': f'content:request:interaction:{MSX.HOST}/msx/category?id={{ID}}&category={category}&extra=fresh&offset={{OFFSET}}&limit={{LIMIT}}|20@http://msx.benzac.de/interaction/paging.html'
+                    'action': f'content:request:interaction:{config.MSX_HOST}/msx/category?id={{ID}}&category={category}&extra=fresh&offset={{OFFSET}}&limit={{LIMIT}}|20@http://msx.benzac.de/interaction/paging.html'
                 },
                 {
                     'title': 'Горячие',
                     'icon': 'whatshot',
-                    #'action': f'content:{MSX.HOST}/msx/category?id={{ID}}&category={category}&extra=hot'
-                    'action': f'content:request:interaction:{MSX.HOST}/msx/category?id={{ID}}&category={category}&extra=hot&offset={{OFFSET}}&limit={{LIMIT}}|20@http://msx.benzac.de/interaction/paging.html'
+                    'action': f'content:request:interaction:{config.MSX_HOST}/msx/category?id={{ID}}&category={category}&extra=hot&offset={{OFFSET}}&limit={{LIMIT}}|20@http://msx.benzac.de/interaction/paging.html'
                 },
                 {
                     'title': 'Популярные',
                     'icon': 'thumb-up',
-                    #'action': f'content:{MSX.HOST}/msx/category?id={{ID}}&category={category}&extra=popular'
-                    'action': f'content:request:interaction:{MSX.HOST}/msx/category?id={{ID}}&category={category}&extra=popular&offset={{OFFSET}}&limit={{LIMIT}}|20@http://msx.benzac.de/interaction/paging.html'
+                    'action': f'content:request:interaction:{config.MSX_HOST}/msx/category?id={{ID}}&category={category}&extra=popular&offset={{OFFSET}}&limit={{LIMIT}}|20@http://msx.benzac.de/interaction/paging.html'
                 }
             ]
             entries = entries[:17]

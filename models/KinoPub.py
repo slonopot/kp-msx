@@ -1,5 +1,6 @@
 import aiohttp
 
+import config
 from models.Category import Category
 from models.Content import Content
 from models.Folder import Folder
@@ -73,8 +74,8 @@ class KinoPub:
     async def get_codes():
         params = {
             'grant_type': 'device_code',
-            'client_id': 'xbmc',
-            'client_secret': 'cgg3gtifu46urtfp2zp1nqtba0k2ezxh'
+            'client_id': config.KP_CLIENT_ID,
+            'client_secret': config.KP_CLIENT_SECRET
         }
         async with aiohttp.ClientSession() as s:
             response = await s.post('https://api.service-kp.com/oauth2/device', params=params)

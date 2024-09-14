@@ -1,4 +1,4 @@
-from models.MSX import MSX
+import config
 
 
 class Folder:
@@ -11,6 +11,5 @@ class Folder:
         return {
             "type": "default",
             "label": self.title,
-            #"data": f"{MSX.HOST}/msx/category?id={{ID}}&category={self.id}"
-            "action": f"content:request:interaction:{MSX.HOST}/msx/folder?id={{ID}}&folder={self.id}&offset={{OFFSET}}&limit={{LIMIT}}|20@http://msx.benzac.de/interaction/paging.html"
+            "action": f"content:request:interaction:{config.MSX_HOST}/msx/folder?id={{ID}}&folder={self.id}&offset={{OFFSET}}&limit={{LIMIT}}|20@http://msx.benzac.de/interaction/paging.html"
         }

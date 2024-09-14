@@ -9,6 +9,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, HTMLResponse
 from functools import wraps
 
+import config
 from models.Category import Category
 from models.Device import Device
 from models.KinoPub import KinoPub
@@ -41,10 +42,6 @@ async def auth(request: Request, call_next):
     request.state.device = Device.by_id(device_id)
     if request.state.device is None and device_id is not None:
         request.state.device = Device.create(device_id)
-    # fsn = request.headers.get('X-FSN')
-    # request.state.router = Router.by_fsn(fsn)
-    # if request.state.router is None:
-    #     request.state.router = Router.register(fsn)
     try:
         result = await call_next(request)
     except Exception as e:
@@ -52,8 +49,6 @@ async def auth(request: Request, call_next):
         result.headers['Access-Control-Allow-Credentials'] = 'true'
         result.headers['Access-Control-Allow-Origin'] = '*'
         traceback.print_exc()
-
-    #result = await call_next(request)
     return result
 
 
@@ -146,5 +141,5 @@ async def episodes(request: Request):
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=3757)
+    uvicorn.run(app, host='0.0.0.0', port=config.PORT)
 

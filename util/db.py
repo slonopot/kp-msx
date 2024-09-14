@@ -1,6 +1,8 @@
 from pymongo import MongoClient
 
-client = MongoClient("REDACTED")
+import config
+
+client = MongoClient(config.MONGODB_URL)
 
 db = client['kp']['devices']
 
