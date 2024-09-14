@@ -32,8 +32,8 @@ class Content:
 
     def msx_action(self):
         if self.video is not None:
-            #return f"video:plugin:http://msx.benzac.de/plugins/html5x.html?url={self.video}"
-            return f'video:resolve:request:interaction:{self.video}@http://msx.benzac.de/interaction/play.html'
+            return f"video:plugin:https://slonopot.github.io/msx-hlsx/hlsx.html?url={self.video}"
+            #return f'video:resolve:request:interaction:{self.video}@http://msx.benzac.de/interaction/play.html'
         if self.seasons is not None:
             return f"panel:{MSX.HOST}/msx/seasons?id={{ID}}&content_id={self.id}"
 
