@@ -86,8 +86,8 @@ class KinoPub:
     async def check_registration(code):
         params = {
             'grant_type': 'device_token',
-            'client_id': 'xbmc',
-            'client_secret': 'cgg3gtifu46urtfp2zp1nqtba0k2ezxh',
+            'client_id': config.KP_CLIENT_ID,
+            'client_secret': config.KP_CLIENT_SECRET,
             'code': code
         }
         async with aiohttp.ClientSession() as s:
@@ -100,8 +100,8 @@ class KinoPub:
     async def refresh_tokens(self):
         params = {
             'grant_type': 'refresh_token',
-            'client_id': 'xbmc',
-            'client_secret': 'cgg3gtifu46urtfp2zp1nqtba0k2ezxh',
+            'client_id': config.KP_CLIENT_ID,
+            'client_secret': config.KP_CLIENT_SECRET,
             'refresh_token': self.refresh
         }
         async with aiohttp.ClientSession() as s:
