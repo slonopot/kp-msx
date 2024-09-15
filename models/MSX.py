@@ -112,7 +112,7 @@ class MSX:
         }
 
     @staticmethod
-    def content(entries, category, page, extra=None):
+    def content(entries, category, page, extra=None, decompress=None):
         resp = {
             "type": "list",
             "template": {
@@ -123,6 +123,9 @@ class MSX:
             },
             "items": []
         }
+
+        if decompress is not None:
+            resp['template']['decompress'] = decompress
 
         if page == 1 and extra is None:
             resp['items'] = [

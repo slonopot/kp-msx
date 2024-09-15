@@ -136,7 +136,7 @@ async def episodes(request: Request):
 @app.get(ENDPOINT + '/search')
 async def episodes(request: Request):
     result = await request.state.device.kp.search(request.query_params.get('q'))
-    result = MSX.content(result, "search", 1, extra=request.query_params.get('q'))
+    result = MSX.content(result, "search", 1, extra=request.query_params.get('q'), decompress=False)
     return result
 
 
