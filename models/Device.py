@@ -41,4 +41,7 @@ class Device:
         self.kp = KinoPub(token, refresh)
 
     async def notify(self):
-        await self.kp.notify()
+        await self.kp.notify(self.id)
+
+    def delete(self):
+        db.delete_device(self.id)

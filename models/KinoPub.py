@@ -29,7 +29,7 @@ class KinoPub:
     async def get_content_categories(self):
         result = await self.api('/types')
         if result is None:
-            return []
+            return None
         return [Category(i) for i in result['items']]
 
     async def get_content(self, category, page=1, extra=None):
@@ -67,8 +67,8 @@ class KinoPub:
             return None
         return [Content(i) for i in result['items']]
 
-    async def notify(self):
-        pass
+    async def notify(self, device_id):
+        await self.api(f'/device/notify', {'title': "KP-MSX", 'hardware': '¯\\_(ツ)_/¯', 'software': device_id})
 
     @staticmethod
     async def get_codes():

@@ -25,3 +25,7 @@ def update_device_tokens(id, token, refresh):
 
 def update_tokens(token, param, param1):
     return db.update_one({'token': token}, {'$set': {'token': param, 'refresh': param1}})
+
+
+def delete_device(id):
+    return db.delete_one({'id': id})

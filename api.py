@@ -61,9 +61,12 @@ async def start(request: Request):
 async def menu(request: Request):
     if not request.state.device.registered():
         return MSX.unregistered_menu()
-    else:
-        categories = await request.state.device.kp.get_content_categories()
-        return MSX.registered_menu(categories)
+
+    categories = await request.state.device.kp.get_content_categories()
+    if categories is None:
+        request.state.device.delete()
+        return MSX.unregistered_menu()
+    return MSX.registered_menu(categories)
 
 
 @app.get(ENDPOINT + '/registration')
@@ -82,6 +85,7 @@ async def registration(request: Request):
     if result is None:
         return MSX.code_not_entered()
     request.state.device.update_tokens(result['access_token'], result['refresh_token'])
+    await request.state.device.notify()
     return MSX.restart()
 
 
