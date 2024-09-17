@@ -13,10 +13,14 @@ class KinoPub:
         self.token = token
         self.refresh = refresh
 
-    async def api(self, path, params=None):
+    async def api(self, path, params=None, method='GET'):
         headers = {'Authorization': 'Bearer ' + self.token}
         async with aiohttp.ClientSession(headers=headers) as s:
-            response = await s.get(f'https://api.service-kp.com/v1{path}', params=params)
+            if method == 'GET':
+                response = await s.get(f'https://api.service-kp.com/v1{path}', params=params)
+            else:
+                response = await s.request(method, f'https://api.service-kp.com/v1{path}', json=params)
+
             if response.status == 401:
                 reauth_result = await self.refresh_tokens()
                 if reauth_result:
@@ -68,7 +72,7 @@ class KinoPub:
         return [Content(i) for i in result['items']]
 
     async def notify(self, device_id):
-        await self.api(f'/device/notify', {'title': "KP-MSX", 'hardware': '¯\\_(ツ)_/¯', 'software': device_id})
+        await self.api(f'/device/notify', {'title': "KP-MSX", 'hardware': '¯\\_(ツ)_/¯', 'software': device_id}, method='POST')
 
     @staticmethod
     async def get_codes():

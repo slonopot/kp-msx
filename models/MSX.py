@@ -80,13 +80,13 @@ class MSX:
                 "items": [
                     {
                         "type": "space",
-                        "layout": "0,0,6,1",
+                        "layout": "0,0,6,2",
                         "title": user_code,
-                        "titleFooter": "Используйте этот код для добавления устройства"
+                        "titleFooter": 'Используйте этот код для добавления устройства на kino.pub или зеркале, после ввода кода нажмите кнопку "Я ввел код".'
                     },
                     {
                         "type": "button",
-                        "layout": "0,1,6,1",
+                        "layout": "0,2,6,1",
                         "label": "Я ввёл код",
                         "action": f"execute:{config.MSX_HOST}/msx/check_registration?id={{ID}}"
                     }]
