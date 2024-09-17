@@ -18,21 +18,28 @@ class Content:
         if (videos := data.get('videos')) is not None:
             self.poster = (data.get('posters') or {}).get('big')
 
-            video = None
+            video_entry = None
+
+            for _video in videos:
+                if len(_video['files']) > 0:
+                    video_entry = _video
+                    break
+
+            video_files = None
             if config.QUALITY is not None:
-                video = [i for i in videos[-1]['files'] if i['quality'] == config.QUALITY]
-                if len(video) == 0:
-                    video = None
+                video_files = [i for i in video_entry['files'] if i['quality'] == config.QUALITY]
+                if len(video_files) == 0:
+                    video_files = None
                 else:
-                    video = video[0]
+                    video_files = video_files[0]
 
-            if video is None:
-                video = sorted(videos[-1]['files'], key=lambda x: x.get('quality_id'))[-1]
+            if video_files is None:
+                video_files = sorted(video_entry['files'], key=lambda x: x.get('quality_id'))[-1]
 
-            self.video = video['url'][config.PROTOCOL]
+            self.video = video_files['url'][config.PROTOCOL]
 
             if config.PROTOCOL == 'http':
-                for subtitle_track in videos[-1]['subtitles']:
+                for subtitle_track in video_entry['subtitles']:
                     language = subtitle_track.get('lang')
                     self.subtitle_tracks[f'html5x:subtitle:{language}:{language}'] = subtitle_track['url']
 
