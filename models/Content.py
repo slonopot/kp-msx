@@ -137,13 +137,13 @@ class Content:
                 "type": "button",
                 "layout": f"0,{(episode.n - 1) % 6},8,1",
                 "label": f"{episode.n}. {episode.title}",
-                "action": f'video:plugin:http://msx.benzac.de/plugins/html5x.html?url={episode.video}',
+                "action": f'video:plugin:{config.PLAYER}?url={episode.video}',
                 'focus': focus,
                 "playerLabel": f'[S{season.n}/E{episode.n}] {self.title}',
                 "properties": {
                     "button:restart:icon": "settings",
                     "button:restart:action": "panel:request:player:options"
-                }
+                } | episode.subtitle_tracks
             })
             focus = False
             if len(items) == 6:
