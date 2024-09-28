@@ -84,6 +84,12 @@ class MSX:
             "icon": "history",
             'data': f"request:interaction:{config.MSX_HOST}/msx/history?id={{ID}}&offset={{OFFSET}}&limit={{LIMIT}}|20@http://msx.benzac.de/interaction/paging.html"
         })
+        entry['menu'].append({
+            "type": "default",
+            "label": "Я смотрю",
+            "icon": "tv",
+            'data': f'{config.MSX_HOST}/msx/watching?id={{ID}}'
+        })
         return entry
 
     @staticmethod

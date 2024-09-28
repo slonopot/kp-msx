@@ -4,6 +4,7 @@ import config
 from models.Category import Category
 from models.Content import Content
 from models.Folder import Folder
+from models.WatchingEntry import WatchingEntry
 from util import db
 
 
@@ -76,6 +77,12 @@ class KinoPub:
         if result is None:
             return None
         return [Content(i['item']) for i in result['history']]
+
+    async def get_watching(self):
+        result = await self.api(f'/watching/serials')
+        if result is None:
+            return None
+        return [Content(i) for i in result['items']]
 
     async def notify(self, device_id):
         await self.api(f'/device/notify', {'title': "KP-MSX", 'hardware': '¯\\_(ツ)_/¯', 'software': device_id}, method='POST')

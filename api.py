@@ -153,6 +153,15 @@ async def history(request: Request):
     return result
 
 
+@app.get(ENDPOINT + '/watching')
+async def watching(request: Request):
+    result = await request.state.device.kp.get_watching()
+    result = MSX.content(result, "watching", 0, extra='wtf')
+    return result
+
+
+
+
 @app.post(ENDPOINT + '/play')
 async def play(request: Request):
     content_id = request.query_params.get('content_id')
