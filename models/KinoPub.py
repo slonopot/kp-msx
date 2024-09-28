@@ -4,7 +4,6 @@ import config
 from models.Category import Category
 from models.Content import Content
 from models.Folder import Folder
-from models.WatchingEntry import WatchingEntry
 from util import db
 
 
