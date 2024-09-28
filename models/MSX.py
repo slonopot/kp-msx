@@ -9,6 +9,8 @@ class MSX:
             'data': {'icon': 'settings', 'action': 'panel:request:player:options'}
         }, {
             'action': 'reload:panel'
+        }, {
+            'action': 'trigger:ready:trigger:-1:player:button:next:execute'
         }
     ]
 
