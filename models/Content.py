@@ -49,7 +49,7 @@ class Content:
 
         if (seasons := data.get('seasons')) is not None:
             self.poster = (data.get('posters') or {}).get('big')
-            self.seasons = [Season(i) for i in seasons]
+            self.seasons = [Season(i, self.id) for i in seasons]
 
     def msx_path(self):
         return f'/content?id={{ID}}&content_id={self.id}'
@@ -63,7 +63,7 @@ class Content:
 
     def msx_action(self):
         if self.video is not None:
-            return f"video:plugin:{config.PLAYER}?url={self.video}"
+            return f"[video:plugin:{config.PLAYER}?url={self.video}|execute:{config.MSX_HOST}/msx/play?content_id={self.id}&id={{ID}}]"
         if self.seasons is not None:
             return f"panel:{config.MSX_HOST}/msx/seasons?id={{ID}}&content_id={self.id}"
 
@@ -89,8 +89,10 @@ class Content:
                         "type": "button",
                         "layout": "4,5,4,1",
                         "label": "Смотреть",
-                        'focus': True
-                    } | self.to_play_video()
+                        'focus': True,
+                        'action': self.msx_action(),
+                        #'properties': self.subtitle_tracks
+                    }
                 ]
             }]
         }
@@ -105,12 +107,12 @@ class Content:
         focus = True
         for season in self.seasons:
             items.append({
-                    "type": "button",
-                    "layout": f"{(season.n - 1) % 24 // 6 * 2},{(season.n - 1) % 6},2,1",
-                    "label": f"Cезон {season.n}",
-                    "action": f'panel:{config.MSX_HOST}/msx/episodes?id={{ID}}&content_id={self.id}&season={season.n}',
-                    'focus': focus
-                })
+                "type": "button",
+                "layout": f"{(season.n - 1) % 24 // 6 * 2},{(season.n - 1) % 6},2,1",
+                "label": f"Cезон {season.n}",
+                "action": f'panel:{config.MSX_HOST}/msx/episodes?id={{ID}}&content_id={self.id}&season={season.n}',
+                'focus': focus,
+            })
             focus = False
             if len(items) == 24:
                 entry['pages'].append({'items': items})
@@ -127,26 +129,24 @@ class Content:
         entry = {
             "type": "pages",
             "headline": self.title,
-            "pages": season.to_episode_pages(self.id)
+            "pages": season.to_episode_pages()
         }
         return entry
 
-    def to_play_video(self):
-        if self.seasons is not None:
-            return {'action': self.msx_action()}
-
-        opts = {
-            "playerLabel": self.title,
-            "properties": {
-                "button:restart:icon": "settings",
-                "button:restart:action": "panel:request:player:options"
-            } | self.subtitle_tracks
-        }
-        if self.watched:
-            entry = {"action": self.msx_action()} | opts
+    def to_player_opts(self, season=None, episode=None):
+        acts = []
+        if self.seasons is None:
+            acts += MSX.player_update_title(self.title)
+            #acts += MSX.player_commit(self.subtitle_tracks)
         else:
-            entry = {
-                'action': f'[video:plugin:{config.PLAYER}?url={self.video}|execute:{config.MSX_HOST}/msx/toggle_watched?content_id={self.id}&id={{ID}}]',
-                'data': opts
-            }
-        return entry
+            for _season in self.seasons:
+                if _season.n != int(season):
+                    continue
+                for _episode in _season.episodes:
+                    if _episode.n == int(episode):
+                        break
+                break
+            acts += _season.to_msx_player_update_actions(episode)
+            acts += MSX.player_update_title(_episode.player_title())
+            #acts += MSX.player_commit(_episode.subtitle_tracks)
+        return acts

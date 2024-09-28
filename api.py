@@ -144,14 +144,28 @@ async def episodes(request: Request):
     return result
 
 
-@app.post(ENDPOINT + '/toggle_watched')
-async def toggle_watched(request: Request):
+@app.post(ENDPOINT + '/play')
+async def play(request: Request):
     content_id = request.query_params.get('content_id')
     season = request.query_params.get('season')
     episode = request.query_params.get('episode')
-    await request.state.device.kp.toggle_watched(content_id, season, episode)
-    return MSX.reload_panel()
+    result = await request.state.device.kp.get_single_content(request.query_params.get('content_id'))
 
+    if season is not None and episode is not None:
+        for _season in result.seasons:
+            if _season.n != int(season):
+                continue
+            for _episode in _season.episodes:
+                if _episode.n == int(episode):
+                    if not _episode.watched:
+                        await request.state.device.kp.toggle_watched(content_id, season, episode)
+                    break
+            break
+    else:
+        if not result.watched:
+            await request.state.device.kp.toggle_watched(content_id)
+    acts = result.to_player_opts(season, episode)
+    return MSX.play(acts)
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=int(config.PORT))

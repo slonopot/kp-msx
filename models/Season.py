@@ -1,88 +1,31 @@
 import config
-from urllib.parse import urlencode
-
-
-class Episode:
-
-    # TODO: Merge with Content?
-
-    def __init__(self, data):
-        self.n = data.get('number')
-        self.title = data.get('title')
-
-        self.watched = data.get('watched') == 1
-
-        self.subtitle_tracks = {}
-
-        video_files = None
-        if config.QUALITY is not None:
-            video_files = [i for i in data['files'] if i['quality'] == config.QUALITY]
-            if len(video_files) == 0:
-                video_files = None
-            else:
-                video_files = video_files[0]
-
-        if video_files is None:
-            video_files = sorted(data['files'], key=lambda x: x.get('quality_id'))[-1]
-
-        self.video = video_files['url'][config.PROTOCOL]
-
-        if config.PROTOCOL == 'http':
-            for subtitle_track in data['subtitles']:
-                language = subtitle_track.get('lang')
-                self.subtitle_tracks[f'html5x:subtitle:{language}:{language}'] = subtitle_track['url']
-
-    def menu_title(self):
-        result = f'{self.n}. {self.title}'
-        if self.watched:
-            result += ' 📺'
-        return result
-
-    def player_title(self, season):
-        return f'[S{season}/E{self.n}] {self.title}'
+from models.Episode import Episode
+from models.MSX import MSX
 
 
 class Season:
 
-    def __init__(self, data):
+    def __init__(self, data, content_id):
+        self.content_id = content_id
+
         self.n = data.get('number')
         self.id = data.get('id')
-        self.episodes = [Episode(i) for i in data.get('episodes')]
+        self.episodes = [Episode(i, content_id, self.n) for i in data.get('episodes')]
 
-    def to_episode_pages(self, content_id=0):
+    def to_episode_pages(self):
         pages = []
         items = []
         focus = True
-        for episode in self.episodes:
+        for i, episode in enumerate(self.episodes):
             entry = {
                 "type": "button",
                 "layout": f"0,{(episode.n - 1) % 6},8,1",
                 "label": episode.menu_title(),
                 'focus': focus,
+                'action': episode.msx_action(),
+                #'properties': episode.subtitle_tracks
             }
 
-            opts = {
-                "playerLabel": episode.player_title(self.n),
-                "properties": {
-                    "button:content:icon": "list-alt",
-                    "button:content:action": f'panel:{config.MSX_HOST}/msx/episodes?id={{ID}}&content_id={content_id}&season={self.n}',
-                    "button:restart:icon": "settings",
-                    "button:restart:action": "panel:request:player:options"
-                } | episode.subtitle_tracks
-            }
-
-            if episode.watched:
-                entry.update({"action": f'video:plugin:{config.PLAYER}?url={episode.video}'} | opts)
-            else:
-                params = {
-                    'content_id': content_id,
-                    'season': self.n,
-                    'episode': episode.n
-                }
-                entry.update({
-                    "action": f'[video:plugin:{config.PLAYER}?url={episode.video}|execute:{config.MSX_HOST}/msx/toggle_watched?{urlencode(params)}&id={{ID}}]',
-                    'data': opts
-                })
             items.append(entry)
             focus = False
             if len(items) == 6:
@@ -91,3 +34,15 @@ class Season:
         if len(items) > 0:
             pages.append({'items': items})
         return pages
+
+    def to_msx_player_update_actions(self, episode=0):
+        episode = int(episode) - 1
+        acts = []
+        acts += MSX.player_update_button('content', 'list-alt',  f'panel:{config.MSX_HOST}/msx/episodes?id={{ID}}&content_id={self.content_id}&season={self.n}')
+
+        if episode != 0:
+            acts += MSX.player_update_button('prev', 'skip-previous', self.episodes[episode - 1].msx_action())
+        if episode + 1 < len(self.episodes):
+            acts += MSX.player_update_button('next', 'skip-next', self.episodes[episode + 1].msx_action())
+
+        return acts

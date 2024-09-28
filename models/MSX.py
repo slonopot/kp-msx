@@ -3,6 +3,29 @@ import config
 
 class MSX:
 
+    DEFAULT_PLAYER_UPDATE_ACTIONS = [
+        {
+            'action': 'player:button:restart:setup',
+            'data': {'icon': 'settings', 'action': 'panel:request:player:options'}
+        }, {
+            'action': 'reload:panel'
+        }
+    ]
+
+    @staticmethod
+    def player_update_title(title): return [{'action': f'player:label:content:{title}'}]
+
+    @staticmethod
+    def player_update_button(button, icon, action): return [
+        {
+            'action': f'player:button:{button}:setup',
+            'data': {'icon': icon, 'action': action}
+        }
+    ]
+
+    @staticmethod
+    def player_commit(data): return [{'action': f'player:commit', 'data': data}]
+
     def __init__(self):
         pass
 
@@ -67,7 +90,7 @@ class MSX:
                 "title": "Title",
             },
             "items": [{
-                    "title": "Уже зарегистрирован"
+                "title": "Уже зарегистрирован"
             }]
         }
 
@@ -164,13 +187,16 @@ class MSX:
             "items": [i.to_msx() for i in result]
         }
 
-    @classmethod
-    def reload_panel(cls):
+    @staticmethod
+    def play(actions):
         return {
             'response': {
                 'status': 200,
                 'data': {
-                    'action': 'reload:panel'
+                    'action': 'data',
+                    'data': {
+                        'actions': MSX.DEFAULT_PLAYER_UPDATE_ACTIONS.copy() + actions
+                    }
                 }
             }
         }
