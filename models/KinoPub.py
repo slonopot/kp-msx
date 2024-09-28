@@ -71,6 +71,12 @@ class KinoPub:
             return None
         return [Content(i) for i in result['items']]
 
+    async def get_history(self, page=1):
+        result = await self.api(f'/history', {'page': page})
+        if result is None:
+            return None
+        return [Content(i['item']) for i in result['history']]
+
     async def notify(self, device_id):
         await self.api(f'/device/notify', {'title': "KP-MSX", 'hardware': '¯\\_(ツ)_/¯', 'software': device_id}, method='POST')
 

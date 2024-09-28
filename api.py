@@ -144,6 +144,15 @@ async def episodes(request: Request):
     return result
 
 
+@app.get(ENDPOINT + '/history')
+async def history(request: Request):
+    offset = request.query_params.get('offset') or 0
+    page = int(offset) // 20 + 1
+    result = await request.state.device.kp.get_history(page=page)
+    result = MSX.content(result, "history", page, extra="wtf")
+    return result
+
+
 @app.post(ENDPOINT + '/play')
 async def play(request: Request):
     content_id = request.query_params.get('content_id')

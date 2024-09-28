@@ -78,6 +78,12 @@ class MSX:
             "icon": "bookmark",
             'data': f'{config.MSX_HOST}/msx/bookmarks?id={{ID}}'
         })
+        entry['menu'].append({
+            "type": "default",
+            "label": "История",
+            "icon": "history",
+            'data': f"request:interaction:{config.MSX_HOST}/msx/history?id={{ID}}&offset={{OFFSET}}&limit={{LIMIT}}|20@http://msx.benzac.de/interaction/paging.html"
+        })
         return entry
 
     @staticmethod
