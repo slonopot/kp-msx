@@ -70,7 +70,7 @@ async def menu(request: Request):
 
 
 @app.get(ENDPOINT + '/registration')
-async def content(request: Request):
+async def registration(request: Request):
     if request.state.device.registered():
         return MSX.already_registered()
     else:
@@ -80,7 +80,7 @@ async def content(request: Request):
 
 
 @app.post(ENDPOINT + '/check_registration')
-async def registration(request: Request):
+async def check_registration(request: Request):
     result = await KinoPub.check_registration(request.state.device.code)
     if result is None:
         return MSX.code_not_entered()
@@ -101,7 +101,7 @@ async def category(request: Request):
 
 
 @app.get(ENDPOINT + '/bookmarks')
-async def folder(request: Request):
+async def bookmarks(request: Request):
     result = await request.state.device.kp.get_bookmark_folders()
 
     result = MSX.bookmark_folders(result)
@@ -138,7 +138,7 @@ async def episodes(request: Request):
 
 
 @app.get(ENDPOINT + '/search')
-async def episodes(request: Request):
+async def search(request: Request):
     result = await request.state.device.kp.search(request.query_params.get('q'))
     result = MSX.content(result, "search", 1, extra=request.query_params.get('q'), decompress=False)
     return result
