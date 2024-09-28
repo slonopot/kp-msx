@@ -163,3 +163,15 @@ class MSX:
             },
             "items": [i.to_msx() for i in result]
         }
+
+    @classmethod
+    def reload_panel(cls):
+        return {
+            'response': {
+                'status': 200,
+                'data': {
+                    'action': 'reload:panel'
+                }
+            }
+        }
+

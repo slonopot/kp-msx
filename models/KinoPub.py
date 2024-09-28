@@ -74,6 +74,14 @@ class KinoPub:
     async def notify(self, device_id):
         await self.api(f'/device/notify', {'title': "KP-MSX", 'hardware': '¯\\_(ツ)_/¯', 'software': device_id}, method='POST')
 
+    async def toggle_watched(self, content_id, season=None, episode=None):
+        params = {'id': content_id}
+        if season is not None:
+            params['season'] = season
+        if episode is not None:
+            params['video'] = episode
+        await self.api(f'/watching/toggle', params)
+
     @staticmethod
     async def get_codes():
         params = {

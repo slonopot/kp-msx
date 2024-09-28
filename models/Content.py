@@ -13,6 +13,8 @@ class Content:
         self.poster = (data.get('posters') or {}).get('medium')
         self.video = None
 
+        self.watched = data.get('watched') == 1
+
         self.subtitle_tracks = dict()
 
         if (videos := data.get('videos')) is not None:
@@ -42,6 +44,8 @@ class Content:
                 for subtitle_track in video_entry['subtitles']:
                     language = subtitle_track.get('lang')
                     self.subtitle_tracks[f'html5x:subtitle:{language}:{language}'] = subtitle_track['url']
+
+        self.seasons = None
 
         if (seasons := data.get('seasons')) is not None:
             self.poster = (data.get('posters') or {}).get('big')
@@ -78,21 +82,16 @@ class Content:
                     {
                         "type": "default",
                         "layout": "4,0,4,5",
-                        "headline": self.title,
+                        #"headline": self.title,
                         "text": self.plot
                     },
                     {
                         "type": "button",
                         "layout": "4,5,4,1",
                         "label": "Смотреть",
-                        'focus': True,
-                        "action": self.msx_action(),
-                        "playerLabel": self.title,
-                        "properties": {
-                            "button:restart:icon": "settings",
-                            "button:restart:action": "panel:request:player:options"
-                        } | self.subtitle_tracks
-                    }]
+                        'focus': True
+                    } | self.to_play_video()
+                ]
             }]
         }
 
@@ -128,27 +127,26 @@ class Content:
         entry = {
             "type": "pages",
             "headline": self.title,
-            "pages": []
+            "pages": season.to_episode_pages(self.id)
         }
-        items = []
-        focus = True
-        for episode in season.episodes:
-            items.append({
-                "type": "button",
-                "layout": f"0,{(episode.n - 1) % 6},8,1",
-                "label": f"{episode.n}. {episode.title}",
-                "action": f'video:plugin:{config.PLAYER}?url={episode.video}',
-                'focus': focus,
-                "playerLabel": f'[S{season.n}/E{episode.n}] {self.title}',
-                "properties": {
-                    "button:restart:icon": "settings",
-                    "button:restart:action": "panel:request:player:options"
-                } | episode.subtitle_tracks
-            })
-            focus = False
-            if len(items) == 6:
-                entry['pages'].append({'items': items})
-                items = []
-        if len(items) > 0:
-            entry['pages'].append({'items': items})
+        return entry
+
+    def to_play_video(self):
+        if self.seasons is not None:
+            return {'action': self.msx_action()}
+
+        opts = {
+            "playerLabel": self.title,
+            "properties": {
+                "button:restart:icon": "settings",
+                "button:restart:action": "panel:request:player:options"
+            } | self.subtitle_tracks
+        }
+        if self.watched:
+            entry = {"action": self.msx_action()} | opts
+        else:
+            entry = {
+                'action': f'[video:plugin:{config.PLAYER}?url={self.video}|execute:{config.MSX_HOST}/msx/toggle_watched?content_id={self.id}&id={{ID}}]',
+                'data': opts
+            }
         return entry

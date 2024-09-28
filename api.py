@@ -144,6 +144,15 @@ async def episodes(request: Request):
     return result
 
 
+@app.post(ENDPOINT + '/toggle_watched')
+async def toggle_watched(request: Request):
+    content_id = request.query_params.get('content_id')
+    season = request.query_params.get('season')
+    episode = request.query_params.get('episode')
+    await request.state.device.kp.toggle_watched(content_id, season, episode)
+    return MSX.reload_panel()
+
+
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=int(config.PORT))
 
