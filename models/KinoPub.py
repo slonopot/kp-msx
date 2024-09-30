@@ -4,6 +4,7 @@ import config
 from models.Category import Category
 from models.Content import Content
 from models.Folder import Folder
+from models.Media import Media
 from util import db
 
 
@@ -75,7 +76,7 @@ class KinoPub:
         result = await self.api(f'/history', {'page': page})
         if result is None:
             return None
-        return [Content(i['item']) for i in result['history']]
+        return [Content(i['item'], Media(i['media'])) for i in result['history']]
 
     async def get_watching(self, subscribed=0):
         result = await self.api(f'/watching/serials', {'subscribed': subscribed})

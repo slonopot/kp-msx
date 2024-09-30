@@ -5,7 +5,9 @@ from models.Season import Season
 
 class Content:
 
-    def __init__(self, data):
+    def __init__(self, data, media=None):
+        self.media = media
+
         self.id = data.get('id')
         self.title = data.get('title')
         self.type = data.get('type')
@@ -55,11 +57,14 @@ class Content:
         return f'/content?id={{ID}}&content_id={self.id}'
 
     def to_msx(self):
-        return {
+        entry = {
             'title': self.title,
             'image': self.poster,
             "action": f"panel:{config.MSX_HOST}/msx/content?id={{ID}}&content_id={self.id}"
         }
+        if self.media is not None and self.type == 'serial':
+            entry['titleFooter'] = self.media.to_subtitle()
+        return entry
 
     def msx_action(self):
         if self.video is not None:
