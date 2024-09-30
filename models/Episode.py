@@ -38,8 +38,6 @@ class Episode:
 
     def menu_title(self):
         result = f'{self.n}. {self.title}'
-        if self.watched:
-            result += ' 📺'
         return result
 
     def player_title(self):
