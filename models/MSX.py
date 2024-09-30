@@ -64,7 +64,7 @@ class MSX:
             "restore": False,
             "refocus": 1,
             "headline": "kino.pub",
-            "menu": [category.to_msx() for category in categories or []],
+            "menu": [category.to_msx() for category in categories or [] if not category.blacklisted],
         }
         entry['menu'].append({
             "type": "default",

@@ -4,9 +4,12 @@ from models.MSX import MSX
 
 class Category:
 
+    BLACKLIST = '4k'
+
     def __init__(self, data):
         self.id = data.get('id')
         self.title = data.get('title')
+        self.blacklisted = self.id in Category.BLACKLIST
 
     def to_msx(self):
         return {
