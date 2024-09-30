@@ -77,8 +77,8 @@ class KinoPub:
             return None
         return [Content(i['item']) for i in result['history']]
 
-    async def get_watching(self):
-        result = await self.api(f'/watching/serials')
+    async def get_watching(self, subscribed=0):
+        result = await self.api(f'/watching/serials', {'subscribed': subscribed})
         if result is None:
             return None
         return [Content(i) for i in result['items']]
@@ -139,6 +139,4 @@ class KinoPub:
             self.refresh = result['refresh_token']
 
             return True
-
-
 
