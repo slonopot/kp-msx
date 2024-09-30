@@ -22,8 +22,8 @@ class Season:
                 "label": episode.menu_title(),
                 'focus': focus == episode.n,
                 'action': episode.msx_action(),
-                'tag': '📺' if episode.watched else None,
-                'tagColor': 'msx-glass'
+                'stamp': '{ico:check}' if episode.watched else None,
+                'stampColor': 'msx-glass'
                 #'properties': episode.subtitle_tracks
             }
 

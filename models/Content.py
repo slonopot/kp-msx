@@ -12,7 +12,13 @@ class Content:
         self.title = data.get('title')
         self.type = data.get('type')
         self.plot = data.get('plot')
-        self.poster = (data.get('posters') or {}).get('medium')
+        self.voice = data.get('voice')
+
+        if self.voice:
+            self.plot += f'\nОзвучки: {self.voice}'
+
+        self.poster = (data.get('posters') or {}).get('big')
+        self.rating = data.get('imdb_rating') or data.get('kinopoinsk_rating')
         self.video = None
 
         self.watched = data.get('watched') == 1
@@ -20,8 +26,6 @@ class Content:
         self.subtitle_tracks = dict()
 
         if (videos := data.get('videos')) is not None:
-            self.poster = (data.get('posters') or {}).get('big')
-
             video_entry = None
 
             for _video in videos:
@@ -64,6 +68,8 @@ class Content:
         }
         if self.media is not None and self.type == 'serial':
             entry['titleFooter'] = self.media.to_subtitle()
+        elif self.rating:
+            entry['titleFooter'] = f'{{ico:stars}} {self.rating}'
         return entry
 
     def msx_action(self):
@@ -76,30 +82,46 @@ class Content:
         return {
             "type": "pages",
             "headline": self.title,
-            "pages": [{
-                "items": [
-                    {
-                        "type": "teaser",
-                        "layout": "0,0,4,6",
-                        "image": self.poster,
-                        "imageFiller": "height-left"
-                    },
-                    {
-                        "type": "default",
-                        "layout": "4,0,4,5",
-                        #"headline": self.title,
-                        "text": self.plot
-                    },
-                    {
-                        "type": "button",
-                        "layout": "4,5,4,1",
-                        "label": "Смотреть",
-                        'focus': True,
-                        'action': self.msx_action(),
-                        #'properties': self.subtitle_tracks
-                    }
-                ]
-            }]
+            "pages": [
+                {
+                    "items": [
+                        {
+                            "type": "teaser",
+                            "layout": "0,0,4,6",
+                            "image": self.poster,
+                            "imageFiller": "height-left",
+                            'action': 'focus:plot',
+                            'stamp': f'{{ico:stars}} {self.rating}' if self.rating else None
+                        },
+                        {
+                            "type": "default",
+                            "layout": "4,0,4,5",
+                            #"headline": self.title,
+                            "text": self.plot,
+                            'action': 'focus:plot'
+                        },
+                        {
+                            "type": "button",
+                            "layout": "4,5,4,1",
+                            "label": "Смотреть",
+                            'focus': True,
+                            'action': self.msx_action(),
+                            #'properties': self.subtitle_tracks
+                        }
+                    ]
+                }, {
+                    'items': [
+                        {
+                            'id': 'plot',
+                            "type": "default",
+                            "layout": "0,0,8,6",
+                            #"headline": self.title,
+                            "text": self.plot,
+                        }
+                    ]
+                }
+            ]
+
         }
 
     def to_seasons_msx_panel(self):
