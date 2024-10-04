@@ -14,6 +14,7 @@ from models.Category import Category
 from models.Device import Device
 from models.KinoPub import KinoPub
 from models.MSX import MSX
+from util import pages
 
 app = FastAPI()
 app.add_middleware(
@@ -25,6 +26,7 @@ app.add_middleware(
 )
 
 ENDPOINT = '/msx'
+UNAUTHORIZED = ['/', ENDPOINT + '/start.json']
 
 
 @app.middleware('http')
@@ -32,7 +34,7 @@ async def auth(request: Request, call_next):
     if request.method == 'OPTIONS':
         return await call_next(request)
     device_id = request.query_params.get('id')
-    if device_id is None and 'start.json' not in str(request.url):
+    if device_id is None and str(request.url.path) not in UNAUTHORIZED:
         return JSONResponse({
             'response': {
                 'status': 200,
@@ -50,6 +52,11 @@ async def auth(request: Request, call_next):
         result.headers['Access-Control-Allow-Origin'] = '*'
         traceback.print_exc()
     return result
+
+
+@app.get('/')
+async def root(request: Request):
+    return HTMLResponse(pages.ROOT)
 
 
 @app.get(ENDPOINT + '/start.json')
