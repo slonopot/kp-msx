@@ -12,28 +12,17 @@ class Season:
         self.id = data.get('id')
         self.episodes = [Episode(i, content_id, self.n) for i in data.get('episodes')]
 
-    def to_episode_pages(self, focus=1):
-        pages = []
+    def to_episode_pages(self):
         items = []
         for i, episode in enumerate(self.episodes):
             entry = {
-                "type": "button",
-                "layout": f"0,{(episode.n - 1) % 6},8,1",
                 "label": episode.menu_title(),
-                'focus': focus == episode.n,
                 'action': episode.msx_action(),
                 'stamp': '{ico:check}' if episode.watched else None,
-                'stampColor': 'msx-glass'
                 #'properties': episode.subtitle_tracks
             }
-
             items.append(entry)
-            if len(items) == 6:
-                pages.append({'items': items})
-                items = []
-        if len(items) > 0:
-            pages.append({'items': items})
-        return pages
+        return items
 
     def to_msx_player_update_actions(self, episode=0):
         episode = int(episode) - 1

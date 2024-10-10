@@ -126,27 +126,20 @@ class Content:
 
     def to_seasons_msx_panel(self):
         entry = {
-            "type": "pages",
+            "type": "list",
             "headline": self.title,
-            "pages": []
-        }
-        items = []
-        focus = True
-        for season in self.seasons:
-            items.append({
+            "template": {
+                'enumerate': False,
                 "type": "button",
-                "layout": f"{(season.n - 1) % 24 // 6 * 2},{(season.n - 1) % 6},2,1",
+                'layout': "0,0,2,1",
+            },
+            "items": []
+        }
+        for season in self.seasons:
+            entry['items'].append({
                 "label": f"Cезон {season.n}",
-                "action": f'panel:{config.MSX_HOST}/msx/episodes?id={{ID}}&content_id={self.id}&season={season.n}',
-                'focus': focus,
+                "action": f'panel:{config.MSX_HOST}/msx/episodes?id={{ID}}&content_id={self.id}&season={season.n}'
             })
-            focus = False
-            if len(items) == 24:
-                entry['pages'].append({'items': items})
-                items = []
-                focus = True
-        if len(items) > 0:
-            entry['pages'].append({'items': items})
         return entry
 
     def to_episodes_msx_panel(self, season_number):
@@ -154,9 +147,15 @@ class Content:
             if season.n == season_number:
                 break
         entry = {
-            "type": "pages",
-            "headline": self.title,
-            "pages": season.to_episode_pages()
+            "type": "list",
+            "headline": f'{self.title} [S{season.n}]',
+            'template': {
+                'enumerate': False,
+                "type": "button",
+                "layout": f"0,0,8,1",
+                'stampColor': 'msx-glass'
+            },
+            "items": season.to_episode_pages()
         }
         return entry
 
