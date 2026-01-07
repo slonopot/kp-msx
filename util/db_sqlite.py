@@ -34,7 +34,7 @@ def create_device(entry):
     cursor = connection.execute(
         '''
         INSERT INTO devices (id, code, refresh, token, settings, user_agent)
-        VALUES (?1, ?2, ?3, ?4)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6)
         RETURNING id, code, refresh, token, settings, user_agent
         ''',
         [
