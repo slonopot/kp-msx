@@ -23,9 +23,9 @@ class KinoPub:
         headers = {'Authorization': 'Bearer ' + self.token, 'Accept-Encoding': 'br'}
         async with aiohttp.ClientSession(headers=headers, timeout=aiohttp.ClientTimeout(total=5)) as s:
             if method == 'GET':
-                response = await s.get(f'https://api.service-kp.com/v1{path}', params=params)
+                response = await s.get(f'{config.KP_API_DOMAIN}/v1{path}', params=params)
             else:
-                response = await s.request(method, f'https://api.service-kp.com/v1{path}', json=params)
+                response = await s.request(method, f'{config.KP_API_DOMAIN}/v1{path}', json=params)
 
             if response.status == 401:
                 reauth_result = await self.refresh_tokens()
@@ -176,7 +176,7 @@ class KinoPub:
             'client_secret': config.KP_CLIENT_SECRET
         }
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as s:
-            response = await s.post('https://api.service-kp.com/oauth2/device', params=params)
+            response = await s.post(f'{config.KP_API_DOMAIN}/oauth2/device', params=params)
             result = await response.json()
             return result['user_code'], result['code']
 
@@ -189,7 +189,7 @@ class KinoPub:
             'code': code
         }
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as s:
-            response = await s.post('https://api.service-kp.com/oauth2/device', params=params)
+            response = await s.post(f'{config.KP_API_DOMAIN}/oauth2/device', params=params)
             result = await response.json()
             if result.get('error') is not None:
                 return None
@@ -203,7 +203,7 @@ class KinoPub:
             'refresh_token': self.refresh
         }
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as s:
-            response = await s.post('https://api.service-kp.com/oauth2/device', params=params)
+            response = await s.post(f'{config.KP_API_DOMAIN}/oauth2/device', params=params)
             result = await response.json()
             if result.get('error') is not None:
                 return False

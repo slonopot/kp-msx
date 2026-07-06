@@ -11,6 +11,7 @@ PLAYER = os.environ.get('PLAYER') or 'https://slonopot.github.io/msx-hlsx/hlsx.h
 ALTERNATIVE_PLAYER = os.environ.get('ALTERNATIVE_PLAYER') or 'http://msx.benzac.de/plugins/html5x.html'
 KP_CLIENT_ID = os.environ.get('KP_CLIENT_ID') or 'xbmc'
 KP_CLIENT_SECRET = os.environ.get('KP_CLIENT_SECRET') or 'cgg3gtifu46urtfp2zp1nqtba0k2ezxh'
+KP_API_DOMAIN = os.environ.get('KP_API_DOMAIN') or 'https://api.service-kp.com'
 QUALITY = os.environ.get('QUALITY')
 PROTOCOL = os.environ.get('PROTOCOL') or 'hls4'
 TIZEN = os.environ.get('TIZEN') == 'yes'
