@@ -38,7 +38,7 @@ def format_action(path: str, params: dict = None, interaction: str = None, optio
 
 def start():
     return {
-        'name': 'kino.pub',
+        'name': 'kino.watch',
         'version': '6.6.6',
         'parameter': format_action('/msx/menu', module='menu'),
         'welcome': 'none',
@@ -56,7 +56,7 @@ def unregistered_menu():
         "reuse": False,
         "cache": False,
         "restore": False,
-        "headline": "kino.pub",
+        "headline": "kino.watch",
         "menu": [
             {
                 "icon": "vpn-key",
@@ -76,7 +76,7 @@ def registered_menu(categories: 'List[Category]'):
         "cache": False,
         "restore": False,
         "refocus": 1,
-        "headline": "kino.pub",
+        "headline": "kino.watch",
         "options": settings_screen(),
         "menu": menu,
     }
@@ -137,7 +137,7 @@ def registration(user_code):
                         "type": "space",
                         "layout": "0,0,6,2",
                         "title": user_code,
-                        "titleFooter": 'Используйте этот код для добавления устройства на kino.pub или зеркале, после ввода кода нажмите кнопку "Я ввел код".'
+                        "titleFooter": 'Используйте этот код для добавления устройства на kino.watch или зеркале, после ввода кода нажмите кнопку "Я ввел код".'
                     }, {
                         "type": "button",
                         "layout": "0,2,6,1",
@@ -411,7 +411,7 @@ def settings_screen(screen: bool = False):
         },
         "items": [
             {
-                "label": 'Настройки kino.pub',
+                "label": 'Настройки kino.watch',
                 'action': format_action('/msx/settings', module='panel'),
                 'icon': 'movie-filter',
                 'restore': False
@@ -434,7 +434,7 @@ def settings_screen(screen: bool = False):
             'id': 'info',
             'offset': '-6,1,6,1',
             #'offset': '0,0,4,1',
-            'headline': 'Настройки можно также открыть из главного меню (слева) нажатием синей цветной [{ico:msx-blue:stop}] кнопки или кнопки "меню" [{ico:menu}] на пульте. Подсказка находится справа снизу экрана.\nЭтот (и любой другой) пункт меню можно скрыть в разделе "Настройки kino.pub".',
+            'headline': 'Настройки можно также открыть из главного меню (слева) нажатием синей цветной [{ico:msx-blue:stop}] кнопки или кнопки "меню" [{ico:menu}] на пульте. Подсказка находится справа снизу экрана.\nЭтот (и любой другой) пункт меню можно скрыть в разделе "Настройки kino.watch".',
             'action': '[]',
         })
 
@@ -454,7 +454,7 @@ HELP_ID = 'help'
 
 def settings_menu(device_settings: 'DeviceSettings'):
     return {
-        "headline": "Настройки kino.pub",
+        "headline": "Настройки kino.watch",
         #"caption": "/{ico:msx-blue:stop}Настройки",
         "template": {
             "enumerate": False,
