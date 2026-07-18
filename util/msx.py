@@ -268,6 +268,18 @@ def update_panel(content_id, value):
     }
 
 
+def update_content(content_id, value):
+    return {
+        'response': {
+            'status': 200,
+            'data': {
+                'action': f'update:content:{content_id}',
+                'data': value
+            }
+        }
+    }
+
+
 def empty_response():
     return {
         'response': {

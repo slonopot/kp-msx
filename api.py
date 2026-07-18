@@ -332,7 +332,7 @@ async def toggle_subscription(request: Request):
     content_id = request.query_params.get('content_id')
     await request.state.device.kp.toggle_subscription(content_id)
     result = await request.state.device.kp.get_single_content(content_id)
-    return msx.update_panel(Content.SUBSCRIPTION_BUTTON_ID, result.to_subscription_button())
+    return msx.update_content(Content.SUBSCRIPTION_BUTTON_ID, result.to_subscription_button())
 
 
 @app.post(ENDPOINT + '/toggle_bookmark')
