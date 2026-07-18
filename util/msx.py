@@ -126,10 +126,14 @@ def already_registered():
     }
 
 
+REGISTRATION_CHECK_PERIOD = 30
+
+
 def registration(user_code):
     return {
         "type": "pages",
         "headline": "Регистрация",
+        'ready': {'action': f'delay:btn:{REGISTRATION_CHECK_PERIOD}:{format_action("/msx/check_registration", params={"silent": "true"}, module="execute")}'},
         "pages": [
             {
                 "items": [
@@ -137,7 +141,7 @@ def registration(user_code):
                         "type": "space",
                         "layout": "0,0,7,2",
                         "title": 'Что это',
-                        "titleFooter": 'Это неофициальный киновотч для Media Station X. Не обращайтесь в поддержку по вопросам, связанным с этим приложением. При возникновении проблем с запуском видео или постерами откройте настройки и ознакомьтесь с пунктами.'
+                        "titleFooter": 'Это неофициальный киновотч для Media Station X. Не обращайтесь в поддержку по вопросам, связанным с этим приложением. При возникновении проблем с запуском видео или постерами откройте настройки приложения (кнопка "меню" или синяя цветная на пульте) и ознакомьтесь с пунктами.'
                     },
                     {
                         "type": "space",
@@ -161,6 +165,14 @@ def code_not_entered():
         'response': {
             'status': 200,
             'data': {'action': 'warn:Код не введён. Если прошло больше 5 минут, перезапустите приложение для получения нового кода.'}
+        }
+    }
+
+def delay_registration_check():
+    return {
+        'response': {
+            'status': 200,
+            'data': {'action': f'delay:btn:{REGISTRATION_CHECK_PERIOD}:{format_action("/msx/check_registration", params={"silent": "true"}, module="execute")}'}
         }
     }
 

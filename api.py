@@ -146,7 +146,10 @@ async def registration(request: Request):
 async def check_registration(request: Request):
     result = await KinoPub.check_registration(request.state.device.code)
     if result is None:
-        return msx.code_not_entered()
+        if request.query_params.get('silent') == 'true':
+            return msx.delay_registration_check()
+        else:
+            return msx.code_not_entered()
     request.state.device.update_tokens(result['access_token'], result['refresh_token'])
     await request.state.device.notify()
     return msx.restart()
