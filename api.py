@@ -207,7 +207,8 @@ async def folder(request: Request):
 @app.get(ENDPOINT + '/content')
 async def content(request: Request):
     result = await request.state.device.kp.get_single_content(request.query_params.get('content_id'))
-    return result.to_msx_panel(
+    #return result.to_msx_panel(
+    return result.to_msx_content(
         device_settings=request.state.device.settings
     )
 
@@ -257,6 +258,14 @@ async def search(request: Request):
     result = await request.state.device.kp.search(request.query_params.get('q'))
     result = msx.content(result, "search", 1, extra=request.query_params.get('q'), decompress=False,
                          device_settings=request.state.device.settings)
+    return result
+
+
+@app.get(ENDPOINT + '/search/content')
+async def search_content(request: Request):
+    page = int(request.query_params.get('page'))
+    result = await request.state.device.kp.search(request.query_params.get('q'), page=page, field=request.query_params.get('field'))
+    result = msx.content(result, "search", page, extra=False, device_settings=request.state.device.settings)
     return result
 
 

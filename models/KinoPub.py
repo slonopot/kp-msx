@@ -73,8 +73,12 @@ class KinoPub:
         results = [Content(i) for i in result['items']]
         return results
 
-    async def search(self, query):
-        result = await self.api('/items/search', params={'q': query})
+    async def search(self, query, page=1, field=None):
+        params = {'q': query, 'page': page}
+        if field is not None:
+            params['field'] = field
+
+        result = await self.api('/items/search', params=params)
         if result is None:
             return []
         results = [Content(i) for i in result['items']]
