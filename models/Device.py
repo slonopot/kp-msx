@@ -10,9 +10,9 @@ class Device:
         self.code = data.get('code')
         self.token = data.get('token')
         self.refresh = data.get('refresh')
-        self.kp = KinoPub(self.token, self.refresh)
         self.settings = DeviceSettings(data.get('settings'))
         self.user_agent = data.get('user_agent')
+        self.kp = KinoPub(self.token, self.refresh, self.user_agent)
 
     def registered(self):
         if self.token is not None:
@@ -119,3 +119,6 @@ class Device:
 
     def update_user_agent(self, user_agent):
         db.update_device_user_agent(self.id, user_agent)
+
+    def set_real_ip(self, real_ip):
+        self.kp.real_ip = real_ip

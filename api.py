@@ -38,6 +38,15 @@ UNAUTHORIZED = [
 ]
 
 
+def extract_real_ip(request):
+    real_ip = request.headers.get("cf-connecting-ip")
+    if real_ip is None:
+        real_ip = request.headers.get("x-forwarded-for")
+    if real_ip is None:
+        real_ip = request.headers.get("x-real-ip")
+    return real_ip
+
+
 @app.middleware('http')
 async def auth(request: Request, call_next):
     if request.method == 'OPTIONS':
@@ -66,6 +75,14 @@ async def auth(request: Request, call_next):
         request.state.device = Device.create(device_id)
     if request.state.device is not None and request.state.device.user_agent is None and (ua := request.headers.get('user-agent')) is not None:
         request.state.device.update_user_agent(ua)
+
+    try:
+        real_ip = extract_real_ip(request)
+        if real_ip is not None and request.state.device is not None:
+            request.state.device.set_real_ip(real_ip)
+    except Exception as ex:
+        pass
+
     try:
         result = await call_next(request)
     except Exception as e:
@@ -413,7 +430,8 @@ async def proxy_req(request: Request):
     url = request.query_params.get('url')
     try:
         proxy.check_url(url)
-        code, content_type, contents = await proxy.get(url)
+        real_ip = extract_real_ip(request)
+        code, content_type, contents = await proxy.get(url, real_ip=real_ip)
     except:
         return Response(status_code=403)
     return Response(contents, code, media_type=content_type)

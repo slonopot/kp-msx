@@ -15,12 +15,20 @@ from util.msx import LENNY
 
 class KinoPub:
 
-    def __init__(self, token, refresh):
+    def __init__(self, token, refresh, user_agent=None):
         self.token = token
         self.refresh = refresh
+        self.real_ip = None
+        self.user_agent = user_agent
 
     async def api(self, path, params=None, method='GET'):
         headers = {'Authorization': 'Bearer ' + self.token, 'Accept-Encoding': 'br'}
+
+        if self.real_ip is not None:
+            headers['X-Real-Ip'] = self.real_ip
+        if self.user_agent is not None:
+            headers['User-Agent'] = 'kp-msx/' + self.user_agent
+
         async with aiohttp.ClientSession(headers=headers, timeout=aiohttp.ClientTimeout(total=5)) as s:
             if method == 'GET':
                 response = await s.get(f'{config.KP_API_DOMAIN}/v1{path}', params=params)

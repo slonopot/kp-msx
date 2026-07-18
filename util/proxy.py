@@ -44,8 +44,12 @@ def rewrite_domain(url: str, content: str) -> str:
     return content
 
 
-async def get(url):
-    async with aiohttp.ClientSession(headers=HEADERS, timeout=aiohttp.ClientTimeout(total=5)) as s:
+async def get(url, real_ip=None):
+    headers = HEADERS.copy()
+    if real_ip is not None:
+        headers['X-Real-Ip'] = real_ip
+
+    async with aiohttp.ClientSession(headers=headers, timeout=aiohttp.ClientTimeout(total=5)) as s:
         response = await s.get(url)
         content = await response.read()
         if isinstance(content, bytes):
