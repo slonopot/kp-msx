@@ -45,6 +45,6 @@ class Playable:
 
         if device_settings is not None and device_settings.alternative_player:
             for track in self.subtitles:
-                props.update({f'html5x:subtitle:{track.lang}:{track.lang.upper()}': track.url if not device_settings.proxy else make_proxy_url(track.url)})
+                props.update({f'html5x:subtitle:{track.lang}:{track.lang.upper()}': track.url})
 
         return props
