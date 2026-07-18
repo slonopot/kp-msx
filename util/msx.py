@@ -403,6 +403,7 @@ DEFAULT_PLAY_BUTTON_PROPS = {
     'button:restart:action': player_action_btn(),
     'button:speed:icon': 'replay',
     'button:speed:action': 'player:restart',
+    'trigger:background': 'player:button:eject:execute'
 }
 
 
