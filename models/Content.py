@@ -258,19 +258,16 @@ class Content:
             {
                 "items": [
                     {
-                        'id': 'poster',
                         "type": "space",
                         "layout": "0,0,4,6",
                         "image": self.poster.get(device_settings=device_settings),
                         "imageFiller": "height-left",
-                        'action': 'focus:plot',
                         'stamp': stamp
                     },
                     {
-                        "type": "default",
+                        "type": "space",
                         "layout": "4,0,8,5",
                         "text": self.plot,
-                        'action': 'focus:plot'
                     }
                 ] + buttons
             }
