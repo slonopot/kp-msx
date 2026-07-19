@@ -288,8 +288,8 @@ class Content:
             }
 
         def action_button(i, title, field):
-            x = i % 3 + 1
-            y = i // 3
+            x = (i + 1) % 4
+            y = (i + 1) // 4
             return {
                 'type': 'button',
                 'layout': f'{x*3},{y},3,1',
@@ -301,12 +301,12 @@ class Content:
 
         if self.director is not None and self.director != '':
             items = [section_title('Режиссер')]
-            items += [action_button(i, val.strip(), 'director') for i, val in enumerate(self.director.split(','))]
+            items += [action_button(i, val.strip(), 'director') for i, val in enumerate(self.director.split(',')[:23])]
             pages.append({'items': items})
 
         if self.cast is not None and self.cast != '':
             items = [section_title('В ролях')]
-            items += [action_button(i, val.strip(), 'cast') for i, val in enumerate(self.cast.split(','))]
+            items += [action_button(i, val.strip(), 'cast') for i, val in enumerate(self.cast.split(',')[:23])]
             pages.append({'items': items})
 
         return {
