@@ -212,7 +212,7 @@ def content(entries, category, page, extra=None, decompress=None, device_setting
     return resp
 
 
-def collections(entries, device_settings: 'DeviceSettings' = None) -> dict:
+def collections(entries, page=1, sort=None, device_settings: 'DeviceSettings' = None) -> dict:
     resp = {
         "type": "list",
         "template": {
@@ -223,6 +223,12 @@ def collections(entries, device_settings: 'DeviceSettings' = None) -> dict:
         },
         "items": []
     }
+
+    if page == 1 and sort is None:
+        from models.CategoryExtra import CategoryExtra
+        resp['header'] = {
+            "items": [i.to_msx(None) for i in CategoryExtra.static__collection_extras()]
+        }
 
     for entry in entries:
         resp['items'].append(entry.to_msx(device_settings=device_settings))

@@ -289,9 +289,10 @@ async def watching(request: Request):
 
 @app.get(ENDPOINT + '/collections')
 async def collections(request: Request):
-    page = request.query_params.get('page')
-    result = await request.state.device.kp.get_collections(page=page)
-    result = msx.collections(result, device_settings=request.state.device.settings)
+    page = int(request.query_params.get('page'))
+    sort = request.query_params.get('sort')
+    result = await request.state.device.kp.get_collections(page=page, sort=sort)
+    result = msx.collections(result, page=page, sort=sort, device_settings=request.state.device.settings)
     return result
 
 

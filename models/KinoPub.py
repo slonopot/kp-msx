@@ -137,8 +137,11 @@ class KinoPub:
             return None
         return [Channel(i) for i in result['channels']]
 
-    async def get_collections(self, page):
-        result = await self.api('/collections', params={'page': page})
+    async def get_collections(self, page, sort=None):
+        params = {'page': page}
+        if sort is not None:
+            params['sort'] = sort
+        result = await self.api('/collections', params=params)
         if result is None:
             return None
         return [Collection(i) for i in result['items']]
