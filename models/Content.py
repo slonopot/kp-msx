@@ -138,7 +138,7 @@ class Content:
             "label": '{ico:msx-white:movie}',
             "playerLabel": f'Трейлер {self.title}',
             'properties': props,
-            'action': msx.play_action(self.trailer, device_settings=device_settings),
+            'action': msx.play_action(self.trailer, device_settings=device_settings, disable_proxy=True),
         }
 
         return button

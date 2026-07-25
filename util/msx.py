@@ -583,8 +583,8 @@ def poster_settings_panel(posters: list['Poster']):
             "items": items
         }
 
-def play_action(video_url, device_settings: 'DeviceSettings' = None):
-    url = make_proxy_url(video_url) if device_settings is not None and device_settings.proxy else video_url
+def play_action(video_url, device_settings: 'DeviceSettings' = None, disable_proxy=False):
+    url = make_proxy_url(video_url) if device_settings is not None and device_settings.proxy and not disable_proxy else video_url
     player = config.ALTERNATIVE_PLAYER if device_settings is not None and device_settings.alternative_player else config.PLAYER
 
     if config.TIZEN:
