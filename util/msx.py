@@ -493,6 +493,8 @@ def settings_menu(device_settings: 'DeviceSettings'):
     return {
         "headline": "Настройки kino.watch",
         #"caption": "/{ico:msx-blue:stop}Настройки",
+        "reuse": False,
+        "cache": False,
         "template": {
             "enumerate": False,
             "type": "control",
