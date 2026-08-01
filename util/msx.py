@@ -82,6 +82,7 @@ def registered_menu(categories: 'List[Category]'):
     }
     return entry
 
+
 def sad_screen():
     return {
         "type": "default",
@@ -109,6 +110,33 @@ def sad_screen():
             ]
         }
     }
+
+
+def does_not_exist():
+    return {
+        "type": "pages",
+        "headline": SAD_LENNY,
+        "pages": [
+            {
+                "items": [
+                    {
+                        "type": "space",
+                        "layout": "0,0,6,2",
+                        "title": 'Ничего не нашлось',
+                        "titleFooter": 'Этот контент сейчас недоступен. Возможно, он когда-то снова появится и будет доступен, но никто не знает, когда.'
+                    },
+                    {
+                        "type": "button",
+                        "layout": "0,2,6,1",
+                        "label": "Вернуться назад",
+                        "action": 'back'
+                    }
+                ],
+            }
+        ]
+    }
+
+
 
 def already_registered():
     return {

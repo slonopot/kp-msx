@@ -210,6 +210,10 @@ async def folder(request: Request):
 @app.get(ENDPOINT + '/content')
 async def content(request: Request):
     result = await request.state.device.kp.get_single_content(request.query_params.get('content_id'))
+
+    if result is None:
+        return msx.does_not_exist()
+
     #return result.to_msx_panel(
     return result.to_msx_content(
         device_settings=request.state.device.settings

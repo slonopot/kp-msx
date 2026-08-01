@@ -41,6 +41,10 @@ class KinoPub:
                     return await self.api(path, params=params)
                 else:
                     return None
+
+            if response.status == 404:
+                return None
+
             result = await response.json()
             return result
 
