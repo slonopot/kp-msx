@@ -32,6 +32,7 @@ class Channel:
             'title': self.title,
             'playerLabel': self.title,
             'image': self.logo,
+            'imageFiller': 'width-center',
             "action": action
         }
         return entry
