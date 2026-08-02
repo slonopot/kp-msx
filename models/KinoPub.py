@@ -29,7 +29,7 @@ class KinoPub:
         if self.user_agent is not None:
             headers['User-Agent'] = 'kp-msx/' + self.user_agent
 
-        async with aiohttp.ClientSession(headers=headers, timeout=aiohttp.ClientTimeout(total=5)) as s:
+        async with aiohttp.ClientSession(headers=headers, timeout=aiohttp.ClientTimeout(total=config.TIMEOUT)) as s:
             if method == 'GET':
                 response = await s.get(f'{config.KP_API_DOMAIN}/v1{path}', params=params)
             else:
@@ -194,7 +194,7 @@ class KinoPub:
             'client_id': config.KP_CLIENT_ID,
             'client_secret': config.KP_CLIENT_SECRET
         }
-        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as s:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=config.TIMEOUT)) as s:
             response = await s.post(f'{config.KP_API_DOMAIN}/oauth2/device', params=params)
             result = await response.json()
             return result['user_code'], result['code']
@@ -207,7 +207,7 @@ class KinoPub:
             'client_secret': config.KP_CLIENT_SECRET,
             'code': code
         }
-        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as s:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=config.TIMEOUT)) as s:
             response = await s.post(f'{config.KP_API_DOMAIN}/oauth2/device', params=params)
             result = await response.json()
             if result.get('error') is not None:
@@ -221,7 +221,7 @@ class KinoPub:
             'client_secret': config.KP_CLIENT_SECRET,
             'refresh_token': self.refresh
         }
-        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as s:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=config.TIMEOUT)) as s:
             response = await s.post(f'{config.KP_API_DOMAIN}/oauth2/device', params=params)
             result = await response.json()
             if result.get('error') is not None:

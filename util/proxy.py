@@ -49,7 +49,7 @@ async def get(url, real_ip=None):
     if real_ip is not None:
         headers['X-Real-Ip'] = real_ip
 
-    async with aiohttp.ClientSession(headers=headers, timeout=aiohttp.ClientTimeout(total=5)) as s:
+    async with aiohttp.ClientSession(headers=headers, timeout=aiohttp.ClientTimeout(total=config.TIMEOUT)) as s:
         response = await s.get(url)
         content = await response.read()
         if isinstance(content, bytes):
