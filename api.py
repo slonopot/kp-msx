@@ -98,10 +98,6 @@ async def auth(request: Request, call_next):
 async def index(request: Request):
     return FileResponse('pages/index.html')
 
-@app.get('/subtitleShifter')
-async def subtitle_editor(request: Request):
-    return FileResponse('pages/subtitle_shifter.html')
-
 @app.get('/paging.html')
 async def subtitle_editor(request: Request):
     return FileResponse('pages/paging.html')
