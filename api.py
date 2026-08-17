@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse, FileResponse, Response
+from starlette.staticfiles import StaticFiles
 
 import config
 from models.Category import Category
@@ -29,10 +30,6 @@ app.add_middleware(BrotliMiddleware, minimum_size=1000)
 
 ENDPOINT = '/msx'
 UNAUTHORIZED = [
-    '/',
-    '/subtitleShifter',
-    '/paging.html',
-    '/paging.js',
     ENDPOINT + '/start.json',
     ENDPOINT + '/proxy'
 ]
@@ -51,37 +48,41 @@ def extract_real_ip(request):
 async def auth(request: Request, call_next):
     if request.method == 'OPTIONS':
         return await call_next(request)
-    device_id = request.query_params.get('id')
 
-    if device_id is None and str(request.url.path) not in UNAUTHORIZED:
-        result = JSONResponse({
-            'response': {
-                'status': 200,
-                'data': {'action': 'warn:ID не может быть пустым'}
-            }
-        })
-        result.headers['Access-Control-Allow-Credentials'] = 'true'
-        result.headers['Access-Control-Allow-Origin'] = '*'
-        return result
+    if request.url.path.startswith('/msx/'):
 
-    if device_id == '{ID}' and str(request.url.path) not in UNAUTHORIZED:
-        result = JSONResponse(msx.unsupported_version())
-        result.headers['Access-Control-Allow-Credentials'] = 'true'
-        result.headers['Access-Control-Allow-Origin'] = '*'
-        return result
+        device_id = request.query_params.get('id')
 
-    request.state.device = Device.by_id(device_id)
-    if request.state.device is None and device_id is not None:
-        request.state.device = Device.create(device_id)
-    if request.state.device is not None and request.state.device.user_agent is None and (ua := request.headers.get('user-agent')) is not None:
-        request.state.device.update_user_agent(ua)
+        if device_id is None and str(request.url.path) not in UNAUTHORIZED:
+            result = JSONResponse({
+                'response': {
+                    'status': 200,
+                    'data': {'action': 'warn:ID не может быть пустым'}
+                }
+            })
+            result.headers['Access-Control-Allow-Credentials'] = 'true'
+            result.headers['Access-Control-Allow-Origin'] = '*'
+            return result
 
-    try:
-        real_ip = extract_real_ip(request)
-        if real_ip is not None and request.state.device is not None:
-            request.state.device.set_real_ip(real_ip)
-    except Exception as ex:
-        pass
+        if device_id == '{ID}' and str(request.url.path) not in UNAUTHORIZED:
+            result = JSONResponse(msx.unsupported_version())
+            result.headers['Access-Control-Allow-Credentials'] = 'true'
+            result.headers['Access-Control-Allow-Origin'] = '*'
+            return result
+
+
+        request.state.device = Device.by_id(device_id)
+        if request.state.device is None and device_id is not None:
+            request.state.device = Device.create(device_id)
+        if request.state.device is not None and request.state.device.user_agent is None and (ua := request.headers.get('user-agent')) is not None:
+            request.state.device.update_user_agent(ua)
+
+        try:
+            real_ip = extract_real_ip(request)
+            if real_ip is not None and request.state.device is not None:
+                request.state.device.set_real_ip(real_ip)
+        except Exception as ex:
+            pass
 
     try:
         result = await call_next(request)
@@ -93,18 +94,6 @@ async def auth(request: Request, call_next):
     return result
 
 # Static files
-
-@app.get('/')
-async def index(request: Request):
-    return FileResponse('pages/index.html')
-
-@app.get('/paging.html')
-async def subtitle_editor(request: Request):
-    return FileResponse('pages/paging.html')
-
-@app.get('/paging.js')
-async def subtitle_editor(request: Request):
-    return FileResponse('pages/paging.js')
 
 @app.get(ENDPOINT + '/start.json')
 async def start(request: Request):
@@ -448,6 +437,12 @@ async def proxy_req(request: Request):
     except:
         return Response(status_code=403)
     return Response(contents, code, media_type=content_type)
+
+
+# Static folders
+
+app.mount('/player/', StaticFiles(directory='player', html=True), name='player')
+app.mount("/", StaticFiles(directory="pages", html=True), name="pages")
 
 
 if __name__ == '__main__':
